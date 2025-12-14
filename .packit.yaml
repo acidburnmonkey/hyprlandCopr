@@ -1,0 +1,11 @@
+packages:
+  hyprland:
+    specfile_path: specs/hyprland.spec
+
+jobs:
+  - job: copr_build
+    trigger: release
+    owner: acidburnmonkey
+    project: hyprland
+    packages: [hyprland]
+    targets: [fedora-all]
