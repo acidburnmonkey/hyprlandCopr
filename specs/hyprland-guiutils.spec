@@ -1,5 +1,5 @@
 Name:           hyprland-guiutils
-Version:        0.1.0
+Version:        0.2.0
 Release:        %autorelease
 Summary:        GUI utilities for the Hyprland compositor
 
