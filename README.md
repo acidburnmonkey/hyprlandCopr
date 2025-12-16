@@ -1,7 +1,16 @@
 # Fedora 43 Build Deps
 
-## For core hyprland <- hyprpaper <-hyprlang
+## For core hyprland and its deps
 
+- aquamarine
+- hyprcursor
+- hyprgraphics
+- hyprlang
+- hyprutils
+- hyprwayland-scanner
+- hyprwire
+
+```
 cairo-devel
 file-devel
 gtest-devel
@@ -38,3 +47,4 @@ xcb-util-devel
 xcb-util-errors-devel
 xcb-util-image-devel
 xcb-util-wm-devel
+```
