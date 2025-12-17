@@ -16,7 +16,8 @@ jobs:
       - name: Read current spec version
         id: current
         run: |
-          current=$(grep -E '^Version:' specs/glaze.spec | awk '{print $2}')
+          # Only capture the first Version: line (pkg-config template also has one)
+          current=$(awk '/^Version:/ {print $2; exit}' specs/glaze.spec)
           echo "current=$current" >> "$GITHUB_OUTPUT"
 
       - name: Fetch latest upstream version
@@ -52,7 +53,8 @@ jobs:
         if: steps.compare.outputs.update == 'true'
         run: |
           latest="${{ steps.latest.outputs.version }}"
-          perl -pi -e "s/^(Version:\\s*)\\S+/\$1${latest}/" specs/glaze.spec
+          # Replace only the first Version: line; leave pkg-config template intact
+          perl -0777 -pi -e "s/^(Version:\\s*)\\S+/\$1${latest}/m" specs/glaze.spec
           echo "Updated glaze.spec to $latest"
 
       - name: Create pull request
