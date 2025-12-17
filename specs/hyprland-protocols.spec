@@ -1,10 +1,9 @@
 Name:           hyprland-protocols
 Version:        0.7.0
 Release:        1%{?dist}
-Summary:        Wayland protocol extensions for Hyprland
+Summary:        Wayland protocol files for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprland-protocols
-
 Source0:        https://github.com/hyprwm/hyprland-protocols/archive/refs/tags/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
 BuildArch:      noarch
@@ -14,7 +13,7 @@ BuildRequires:  ninja-build
 BuildRequires:  pkgconf-pkg-config
 
 %description
-Additional Wayland protocol XMLs used by Hyprland and related projects.
+Protocol XML files used by Hyprland and related projects.
 
 %prep
 %autosetup -n %{name}-%{version}
@@ -27,11 +26,10 @@ Additional Wayland protocol XMLs used by Hyprland and related projects.
 %meson_install
 
 %files
-%license LICENSE*
-%doc README*
-%{_datadir}/hyprland-protocols/
+%license LICENSE
+%doc README.md
+%{_datadir}/hyprland-protocols/protocols/*.xml
 %{_datadir}/pkgconfig/hyprland-protocols.pc
 
 %changelog
 %autochangelog
-

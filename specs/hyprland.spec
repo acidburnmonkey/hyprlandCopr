@@ -22,6 +22,7 @@ BuildRequires:  hyprgraphics-devel
 BuildRequires:  aquamarine-devel
 BuildRequires:  hyprwire-devel
 BuildRequires:  hyprland-protocols
+BuildRequires:  glaze-devel
 
 # System libs/tools (matches known-good Fedora 43 build set)
 BuildRequires:  cairo-devel
@@ -71,54 +72,61 @@ BuildRequires:  libuuid-devel
 BuildRequires:  uuid-c++-devel
 BuildRequires:  uuid-devel
 BuildRequires:  udis86-devel
-BuildRequires:  glaze-devel
 
+# If linking against system udis86:
+Requires:       xorg-x11-server-Xwayland%{?_isa}
 
 %description
-Hyprland is a dynamic tiling Wayland compositor with modern Wayland features,
-high customizability, IPC, plugins, and visual effects.
+Hyprland is a dynamic tiling Wayland compositor that doesn't sacrifice on its looks.
+
+%package devel
+Summary:        Header and protocol files for %{name}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+
+%description devel
+Development headers and pkg-config file for Hyprland.
 
 %prep
 %autosetup -n Hyprland-%{version}
 
 
 %build
-# GCC 15 (Fedora 43) + generated protocol code can error on zero-length arrays
-export CXXFLAGS="%{optflags} -Wno-zero-length-array"
-export CFLAGS="%{optflags} -Wno-zero-length-array"
-
-%cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=%{_prefix}
-%cmake_build -C build
+%cmake -GNinja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DNO_TESTS=TRUE \
+  -DBUILD_TESTING=FALSE
+%cmake_build
 
 %install
-%cmake_install -C build
+%cmake_install
 
-# Ensure "hyprland" alias exists (some setups expect it)
-ln -sf Hyprland %{buildroot}%{_bindir}/hyprland
-
-# Ensure session desktop entry exists
-install -d %{buildroot}%{_datadir}/wayland-sessions
-if [ ! -f %{buildroot}%{_datadir}/wayland-sessions/hyprland.desktop ]; then
-cat > %{buildroot}%{_datadir}/wayland-sessions/hyprland.desktop << 'EOF'
-[Desktop Entry]
-Name=Hyprland
-Comment=Dynamic tiling Wayland compositor
-Exec=Hyprland
-Type=Application
-DesktopNames=Hyprland
-EOF
-fi
+# NOT want to package these:
+rm -f %{buildroot}%{_bindir}/hyprtester
+rm -f %{buildroot}%{_libdir}/hyprtestplugin.so
+rm -f %{buildroot}/usr/lib/hyprtestplugin.so
 
 %files
 %license LICENSE
 %doc README.md
+
 %{_bindir}/Hyprland
-%{_bindir}/hyprland
 %{_bindir}/hyprctl
 %{_bindir}/hyprpm
-%{_datadir}/wayland-sessions/hyprland.desktop
+
 %{_datadir}/hypr/
-%{_datadir}/xdg-desktop-portal/hyprland-portals.conf
+%{_datadir}/wayland-sessions/*.desktop
+%{_datadir}/xdg-desktop-portal/*.conf
+
+%{_mandir}/man1/Hyprland.1*
+%{_mandir}/man1/hyprctl.1*
+
+%{bash_completions_dir}/hypr*
+%{fish_completions_dir}/hypr*.fish
+%{zsh_completions_dir}/_hypr*
+
+%files devel
+%{_includedir}/hyprland/
+%{_datadir}/pkgconfig/hyprland.pc
 
 %changelog
 %autochangelog
