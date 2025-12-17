@@ -1,0 +1,76 @@
+name: Update glaze spec
+
+on:
+  schedule:
+    # First day of every other month at 00:00 UTC
+    - cron: "0 0 1 */2 *"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read current spec version
+        id: current
+        run: |
+          current=$(grep -E '^Version:' specs/glaze.spec | awk '{print $2}')
+          echo "current=$current" >> "$GITHUB_OUTPUT"
+
+      - name: Fetch latest upstream version
+        id: latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          api_url="https://api.github.com/repos/stephenberry/glaze/releases/latest"
+          latest=$(curl -sSL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "$api_url" | jq -r '.tag_name')
+          latest=${latest#v}
+          if [ -z "$latest" ] || [ "$latest" = "null" ]; then
+            echo "Unable to determine latest release tag" >&2
+            exit 1
+          fi
+          echo "version=$latest" >> "$GITHUB_OUTPUT"
+
+      - name: Compare versions
+        id: compare
+        run: |
+          current="${{ steps.current.outputs.current }}"
+          latest="${{ steps.latest.outputs.version }}"
+          newest=$(printf '%s\n%s\n' "$current" "$latest" | sort -V | tail -n1)
+          update=false
+          if [ "$newest" = "$latest" ] && [ "$latest" != "$current" ]; then
+            update=true
+          fi
+          echo "update=$update" >> "$GITHUB_OUTPUT"
+
+      - name: Bump spec version
+        if: steps.compare.outputs.update == 'true'
+        run: |
+          latest="${{ steps.latest.outputs.version }}"
+          perl -pi -e "s/^(Version:\\s*)\\S+/\$1${latest}/" specs/glaze.spec
+          echo "Updated glaze.spec to $latest"
+
+      - name: Create pull request
+        if: steps.compare.outputs.update == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/update-glaze-${{ steps.latest.outputs.version }}
+          commit-message: "chore: bump glaze to v${{ steps.latest.outputs.version }}"
+          title: "chore: bump glaze to v${{ steps.latest.outputs.version }}"
+          body: |
+            Automated bump for `glaze` spec.
+
+            - Current version: ${{ steps.current.outputs.current }}
+            - Upstream version: ${{ steps.latest.outputs.version }}
+
+            This updates `specs/glaze.spec` when upstream moves ahead.
+
+      - name: No update needed
+        if: steps.compare.outputs.update != 'true'
+        run: echo "glaze.spec already matches the latest upstream release."

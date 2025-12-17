@@ -1,6 +1,6 @@
 # Fedora 43 Build Deps
 
-## For core hyprland and its deps
+## For core Hyprland and its deps
 
 - aquamarine
 - hyprcursor
@@ -48,3 +48,5 @@ xcb-util-errors-devel
 xcb-util-image-devel
 xcb-util-wm-devel
 ```
+
+![coreDeps](./docs/coreGrapth.webp)
