@@ -1,43 +1,14 @@
-name: Update Bulild Deps
+name: Update hyprland spec
 
 on:
   schedule:
     # Every 2 days at 00:00 UTC
-    - cron: '0 0 */2 * *'
+    - cron: "0 0 */2 * *"
   workflow_dispatch:
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: aquamarine
-            repo: hyprwm/aquamarine
-            spec: specs/aquamarine.spec
-          - name: hyprcursor
-            repo: hyprwm/hyprcursor
-            spec: specs/hyprcursor.spec
-          - name: hyprgraphics
-            repo: hyprwm/hyprgraphics
-            spec: specs/hyprgraphics.spec
-          - name: hyprland-protocols
-            repo: hyprwm/hyprland-protocols
-            spec: specs/hyprland-protocols.spec
-          - name: hyprlang
-            repo: hyprwm/hyprlang
-            spec: specs/hyprlang.spec
-          - name: hyprutils
-            repo: hyprwm/hyprutils
-            spec: specs/hyprutils.spec
-          - name: hyprwayland-scanner
-            repo: hyprwm/hyprwayland-scanner
-            spec: specs/hyprwayland-scanner.spec
-          - name: hyprwire
-            repo: hyprwm/hyprwire
-            spec: specs/hyprwire.spec
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -45,7 +16,8 @@ jobs:
       - name: Read current spec version
         id: current
         run: |
-          current=$(awk '/^Version:/ {print $2; exit}' "${{ matrix.spec }}")
+          # Only the top Version: (udis86 pkg-config version appears later)
+          current=$(awk '/^Version:/ {print $2; exit}' specs/hyprland.spec)
           echo "current=$current" >> "$GITHUB_OUTPUT"
 
       - name: Fetch latest upstream version
@@ -53,7 +25,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          api_release="https://api.github.com/repos/${{ matrix.repo }}/releases/latest"
+          api_release="https://api.github.com/repos/hyprwm/Hyprland/releases/latest"
           latest=$(curl -sSL \
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H "Accept: application/vnd.github+json" \
@@ -64,13 +36,13 @@ jobs:
             latest=$(curl -sSL \
               -H "Authorization: Bearer ${GH_TOKEN}" \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/${{ matrix.repo }}/tags?per_page=1" \
+              "https://api.github.com/repos/hyprwm/Hyprland/tags?per_page=1" \
               | jq -r '.[0].name // empty')
           fi
 
           latest=${latest#v}
           if [ -z "$latest" ] || [ "$latest" = "null" ]; then
-            echo "Unable to determine latest version for ${{ matrix.repo }}" >&2
+            echo "Unable to determine latest Hyprland version" >&2
             exit 1
           fi
           echo "version=$latest" >> "$GITHUB_OUTPUT"
@@ -91,25 +63,26 @@ jobs:
         if: steps.compare.outputs.update == 'true'
         run: |
           latest="${{ steps.latest.outputs.version }}"
-          perl -0777 -pi -e "s/^(Version:\\s*)\\S+/\$1${latest}/m" "${{ matrix.spec }}"
-          echo "Updated ${{ matrix.spec }} to $latest"
+          # Replace only the first Version: line; leave udis86 version untouched
+          perl -0777 -pi -e "s/^(Version:\\s*)\\S+/\$1${latest}/m" specs/hyprland.spec
+          echo "Updated specs/hyprland.spec to $latest"
 
       - name: Create pull request
         if: steps.compare.outputs.update == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          branch: chore/update-${{ matrix.name }}-${{ steps.latest.outputs.version }}
-          commit-message: 'chore: bump ${{ matrix.name }} to v${{ steps.latest.outputs.version }}'
-          title: 'chore: bump ${{ matrix.name }} to v${{ steps.latest.outputs.version }}'
+          branch: chore/update-hyprland-${{ steps.latest.outputs.version }}
+          commit-message: "chore: bump hyprland to v${{ steps.latest.outputs.version }}"
+          title: "chore: bump hyprland to v${{ steps.latest.outputs.version }}"
           body: |
-            Automated bump for `${{ matrix.name }}` spec.
+            Automated bump for `hyprland` spec.
 
             - Current version: ${{ steps.current.outputs.current }}
             - Upstream version: ${{ steps.latest.outputs.version }}
 
-            This updates `${{ matrix.spec }}` when upstream moves ahead.
+            This updates `specs/hyprland.spec` when upstream moves ahead.
 
       - name: No update needed
         if: steps.compare.outputs.update != 'true'
-        run: echo "${{ matrix.spec }} already matches the latest upstream release."
+        run: echo "specs/hyprland.spec already matches the latest Hyprland release."
