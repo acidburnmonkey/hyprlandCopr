@@ -91,6 +91,27 @@ Development headers and pkg-config file for Hyprland.
 
 
 %build
+#udis err
+# GCC 15 + generated protocol code can error on zero-length arrays
+export CXXFLAGS="%{optflags} -Wno-zero-length-array"
+export CFLAGS="%{optflags} -Wno-zero-length-array"
+
+# Fedora udis86-devel ships headers/libs but NO udis86.pc.
+# Hyprland checks pkg-config for "udis86>=1.7.2", so provide a local .pc:
+cat > udis86.pc <<'EOF'
+prefix=/usr
+exec_prefix=${prefix}
+libdir=%{_libdir}
+includedir=%{_includedir}
+
+Name: udis86
+Description: udis86 disassembler library
+Version: 1.7.2
+Libs: -L${libdir} -ludis86
+Cflags: -I${includedir}
+EOF
+export PKG_CONFIG_PATH="$PWD:${PKG_CONFIG_PATH:-}"
+
 %cmake -GNinja \
   -DCMAKE_BUILD_TYPE=Release \
   -DNO_TESTS=TRUE \
@@ -99,6 +120,11 @@ Development headers and pkg-config file for Hyprland.
 
 %install
 %cmake_install
+
+# provide legacy name if upstream installs lowercase
+if [ -f %{buildroot}%{_bindir}/hyprland ] && [ ! -e %{buildroot}%{_bindir}/Hyprland ]; then
+  ln -s hyprland %{buildroot}%{_bindir}/Hyprland
+fi
 
 # NOT want to package these:
 rm -f %{buildroot}%{_bindir}/hyprtester
@@ -109,6 +135,7 @@ rm -f %{buildroot}/usr/lib/hyprtestplugin.so
 %license LICENSE
 %doc README.md
 
+%{_bindir}/hyprland
 %{_bindir}/Hyprland
 %{_bindir}/hyprctl
 %{_bindir}/hyprpm
