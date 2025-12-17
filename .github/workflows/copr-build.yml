@@ -1,0 +1,69 @@
+name: Trigger Copr builds on spec/ changes
+
+on:
+  push:
+    paths:
+      - 'specs/*.spec'
+  workflow_dispatch:
+
+jobs:
+  copr-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install copr-cli
+        run: |
+          python3 -m pip install --user --upgrade pip
+          python3 -m pip install --user copr-cli
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Configure copr-cli
+        env:
+          COPR_CONFIG: ${{ secrets.COPR_CONFIG }}
+        run: |
+          if [ -z "$COPR_CONFIG" ]; then
+            echo "COPR_CONFIG secret is not set" >&2
+            exit 1
+          fi
+          mkdir -p ~/.config
+          printf "%s\n" "$COPR_CONFIG" > ~/.config/copr
+          chmod 600 ~/.config/copr
+
+      - name: Detect changed specs
+        id: changes
+        run: |
+          base="${{ github.event.before }}"
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
+            base="HEAD^"
+          fi
+          changed=$(git diff --name-only "$base" HEAD -- 'specs/*.spec' | sort -u)
+          if [ -z "$changed" ]; then
+            echo "none=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "none=false" >> "$GITHUB_OUTPUT"
+          {
+            echo "files<<'EOF'"
+            echo "$changed"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Trigger Copr builds
+        if: steps.changes.outputs.none != 'true'
+        env:
+          OWNER: acidburnmonkey
+          PROJECT: hyprland
+        run: |
+          echo "Changed specs:"
+          echo "${{ steps.changes.outputs.files }}"
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            spec=$(basename "$file")
+            pkg=${spec%.spec}
+            echo "Triggering Copr build for package: $pkg"
+            copr-cli build-package --name "$pkg" --nowait "$OWNER/$PROJECT"
+          done <<< "${{ steps.changes.outputs.files }}"
