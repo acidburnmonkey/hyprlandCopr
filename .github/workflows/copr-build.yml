@@ -47,9 +47,9 @@ jobs:
           fi
           echo "none=false" >> "$GITHUB_OUTPUT"
           {
-            echo "files<<'EOF'"
+            echo 'files<<EOF'
             echo "$changed"
-            echo "EOF"
+            echo 'EOF'
           } >> "$GITHUB_OUTPUT"
 
       - name: Trigger Copr builds
