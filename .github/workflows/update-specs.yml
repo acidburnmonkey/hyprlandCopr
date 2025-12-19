@@ -1,4 +1,4 @@
-name: Update Bulild Deps
+name: Update Core Bulild Deps
 
 on:
   schedule:
