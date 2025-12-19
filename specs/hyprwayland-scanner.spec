@@ -1,13 +1,12 @@
 Name:           hyprwayland-scanner
 Version:        0.4.5
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        A Hyprland implementation of wayland-scanner, in and for C++
 
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprwayland-scanner
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
-# https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
 ExcludeArch:    %{ix86}
 
 BuildRequires:  cmake
@@ -19,10 +18,11 @@ BuildRequires:  ninja-build
 %{summary}.
 
 %package        devel
-Summary:        A Hyprland implementation of wayland-scanner, in and for C++
+Summary:        Development files for %{name}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description    devel
-%{summary}.
+CMake config and pkg-config files for %{name}.
 
 %prep
 %autosetup -p1
@@ -34,12 +34,15 @@ Summary:        A Hyprland implementation of wayland-scanner, in and for C++
 %install
 %cmake_install
 
-%files devel
+%files
 %license LICENSE
 %doc README.md
 %{_bindir}/%{name}
+
+%files devel
 %{_libdir}/pkgconfig/%{name}.pc
 %{_libdir}/cmake/%{name}/
 
 %changelog
 %autochangelog
+

@@ -1,5 +1,7 @@
 # Fedora 43 Build Deps
 
+[hyprland repo](https://github.com/hyprwm)
+
 ## For core Hyprland and its deps
 
 - aquamarine
