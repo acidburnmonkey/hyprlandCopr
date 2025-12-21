@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'specs/*.spec'
+      - 'brood/*.spec'
   workflow_dispatch:
 
 jobs:
@@ -40,7 +41,7 @@ jobs:
           if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ]; then
             base="HEAD^"
           fi
-          changed=$(git diff --name-only "$base" HEAD -- 'specs/*.spec' | sort -u)
+          changed=$(git diff --name-only "$base" HEAD -- 'specs/*.spec' 'brood/*.spec' | sort -u)
           if [ -z "$changed" ]; then
             echo "none=true" >> "$GITHUB_OUTPUT"
             exit 0
