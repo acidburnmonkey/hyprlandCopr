@@ -1,6 +1,6 @@
 Name:           glaze
 Version:        6.2.0
-Release:        1%{?dist}
+Release:        %autorelease
 Summary:        Extremely fast, in-memory JSON and interface library
 
 License:        MIT

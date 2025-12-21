@@ -1,4 +1,4 @@
-name: Trigger Copr builds on spec/
+name: Trigger Copr builds
 
 on:
   push:

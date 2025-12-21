@@ -1,6 +1,6 @@
 Name:           hyprwire
 Version:        0.2.1
-Release:        1%{?dist}
+Release:        %autorelease
 Summary:        Hyprland wire/IPC helper library
 
 License:        BSD-3-Clause

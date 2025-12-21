@@ -1,9 +1,9 @@
-name: Update hyprland spec
+name: Update hyprland
 
 on:
   schedule:
     # Every 2 days at 00:00 UTC
-    - cron: "0 0 */2 * *"
+    - cron: '0 0 */2 * *'
   workflow_dispatch:
 
 jobs:
@@ -73,8 +73,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: chore/update-hyprland-${{ steps.latest.outputs.version }}
-          commit-message: "chore: bump hyprland to v${{ steps.latest.outputs.version }}"
-          title: "chore: bump hyprland to v${{ steps.latest.outputs.version }}"
+          commit-message: 'chore: bump hyprland to v${{ steps.latest.outputs.version }}'
+          title: 'chore: bump hyprland to v${{ steps.latest.outputs.version }}'
           body: |
             Automated bump for `hyprland` spec.
 

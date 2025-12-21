@@ -1,6 +1,6 @@
 Name:           xdg-desktop-portal-hyprland
 Version:        1.3.11
-Release:        2%{?dist}
+Release:        %autorelease
 Summary:        XDG Desktop Portal backend for Hyprland
 
 License:        BSD-3-Clause
