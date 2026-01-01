@@ -1,5 +1,5 @@
 Name:           hyprpaper
-Version:        0.7.6
+.8.0
 Release:        %autorelease
 Summary:        Blazing fast Wayland wallpaper utility with IPC controls
 
