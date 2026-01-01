@@ -37,8 +37,8 @@ else
 fi
 
 # pkg-config file (Hyprland can use pkg_check_modules)
-install -d %{buildroot}%{_libdir}/pkgconfig
-cat > %{buildroot}%{_libdir}/pkgconfig/glaze.pc << 'EOF'
+install -d %{buildroot}%{_datadir}/pkgconfig
+cat > %{buildroot}%{_datadir}/pkgconfig/glaze.pc << 'EOF'
 prefix=/usr
 includedir=${prefix}/include
 
@@ -49,8 +49,8 @@ Cflags: -I${includedir}
 EOF
 
 # CMake package config (Hyprland can use find_package(glaze CONFIG))
-install -d %{buildroot}%{_libdir}/cmake/glaze
-cat > %{buildroot}%{_libdir}/cmake/glaze/glazeConfig.cmake << 'EOF'
+install -d %{buildroot}%{_datadir}/cmake/glaze
+cat > %{buildroot}%{_datadir}/cmake/glaze/glazeConfig.cmake << 'EOF'
 # Minimal config for consumers: provides glaze::glaze as an INTERFACE target
 if(NOT TARGET glaze::glaze)
   add_library(glaze::glaze INTERFACE IMPORTED)
@@ -60,6 +60,21 @@ if(NOT TARGET glaze::glaze)
     INTERFACE_INCLUDE_DIRECTORIES "${_glaze_prefix}/include"
   )
 endif()
+set(glaze_VERSION "%{version}")
+set(glaze_FOUND TRUE)
+EOF
+
+cat > %{buildroot}%{_datadir}/cmake/glaze/glazeConfigVersion.cmake << 'EOF'
+set(PACKAGE_VERSION "%{version}")
+if(PACKAGE_FIND_VERSION VERSION_GREATER PACKAGE_VERSION)
+  set(PACKAGE_VERSION_COMPATIBLE FALSE)
+  set(PACKAGE_VERSION_EXACT FALSE)
+else()
+  set(PACKAGE_VERSION_COMPATIBLE TRUE)
+  if(PACKAGE_FIND_VERSION VERSION_EQUAL PACKAGE_VERSION)
+    set(PACKAGE_VERSION_EXACT TRUE)
+  endif()
+endif()
 EOF
 
 %files
@@ -68,8 +83,9 @@ EOF
 
 %files devel
 %{_includedir}/glaze
-%{_libdir}/pkgconfig/glaze.pc
-%{_libdir}/cmake/glaze/glazeConfig.cmake
+%{_datadir}/pkgconfig/glaze.pc
+%{_datadir}/cmake/glaze/glazeConfig.cmake
+%{_datadir}/cmake/glaze/glazeConfigVersion.cmake
 
 %changelog
 %autochangelog

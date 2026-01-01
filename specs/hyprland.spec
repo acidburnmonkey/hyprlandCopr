@@ -1,5 +1,5 @@
 Name:           hyprland
-.53.0
+Version:        0.53.0
 Release:        %autorelease
 Summary:        Dynamic tiling Wayland compositor
 License:        BSD-3-Clause
@@ -15,14 +15,15 @@ BuildRequires:  patchelf
 
 # COPR-built Hypr deps (system-installed)
 BuildRequires:  hyprwayland-scanner-devel
-BuildRequires:  hyprutils-devel
-BuildRequires:  hyprlang-devel
-BuildRequires:  hyprcursor-devel
-BuildRequires:  hyprgraphics-devel
-BuildRequires:  aquamarine-devel
+BuildRequires:  hyprutils-devel >= 0.11.0
+BuildRequires:  hyprlang-devel >= 0.6.7
+BuildRequires:  hyprcursor-devel >= 0.1.7
+BuildRequires:  hyprgraphics-devel >= 0.5.0
+BuildRequires:  aquamarine-devel >= 0.9.3
 BuildRequires:  hyprwire-devel
 BuildRequires:  hyprland-protocols
 BuildRequires:  glaze-devel
+BuildRequires:  git
 
 # System libs/tools (matches known-good Fedora 43 build set)
 BuildRequires:  cairo-devel
@@ -48,6 +49,7 @@ BuildRequires:  pango-devel
 BuildRequires:  pixman-devel
 BuildRequires:  pugixml-devel
 BuildRequires:  re2-devel
+BuildRequires:  pkgconfig(muparser)
 BuildRequires:  scdoc
 BuildRequires:  libseat-devel
 BuildRequires:  systemd-devel
@@ -115,11 +117,27 @@ export PKG_CONFIG_PATH="$PWD:${PKG_CONFIG_PATH:-}"
 %cmake -GNinja \
   -DCMAKE_BUILD_TYPE=Release \
   -DNO_TESTS=TRUE \
-  -DBUILD_TESTING=FALSE
+  -DBUILD_TESTING=FALSE \
+  -Dglaze_DIR=%{_libdir}/cmake/glaze
 %cmake_build
 
 %install
 %cmake_install
+
+# Hyprland's bundled glaze sneaks into the install tree; rely on system glaze instead.
+rm -rf %{buildroot}%{_includedir}/glaze \
+       %{buildroot}%{_datadir}/glaze \
+       %{buildroot}%{_datadir}/cmake/glaze
+
+# Normalize symlinks to be relative
+if [ -L %{buildroot}%{_bindir}/hyprland ]; then
+  rm -f %{buildroot}%{_bindir}/hyprland
+  ln -s Hyprland %{buildroot}%{_bindir}/hyprland
+fi
+if [ -L %{buildroot}%{_bindir}/start-hyprland ]; then
+  rm -f %{buildroot}%{_bindir}/start-hyprland
+  ln -s Hyprland %{buildroot}%{_bindir}/start-hyprland
+fi
 
 # provide legacy name if upstream installs lowercase
 if [ -f %{buildroot}%{_bindir}/hyprland ] && [ ! -e %{buildroot}%{_bindir}/Hyprland ]; then
@@ -139,6 +157,7 @@ rm -f %{buildroot}/usr/lib/hyprtestplugin.so
 %{_bindir}/Hyprland
 %{_bindir}/hyprctl
 %{_bindir}/hyprpm
+%{_bindir}/start-hyprland
 
 %{_datadir}/hypr/
 %{_datadir}/wayland-sessions/*.desktop

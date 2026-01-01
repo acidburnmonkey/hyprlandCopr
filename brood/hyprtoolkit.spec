@@ -1,12 +1,11 @@
 Name:           hyprtoolkit
-.5.0
+Version:        0.5.0
 Release:        %autorelease
 Summary:        Modern C++ Wayland-native GUI toolkit
 
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprtoolkit
 Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
-
 
 BuildRequires:  gcc-c++
 BuildRequires:  cmake
@@ -33,13 +32,10 @@ BuildRequires:  pkgconfig(pangocairo)
 # Config parser
 BuildRequires:  pkgconfig(iniparser)
 
-# Hypr libs (provided by your other COPR packages)
 BuildRequires:  pkgconfig(hyprutils)
 BuildRequires:  pkgconfig(hyprlang)
 BuildRequires:  pkgconfig(hyprgraphics)
 BuildRequires:  pkgconfig(aquamarine)
-
-# Some Fedora setups need this for GLES symbols/headers even with pkgconfig(egl)
 BuildRequires:  mesa-libGLES-devel
 
 %description
@@ -62,7 +58,6 @@ Headers and development files for building software against %{name}.
 %autosetup -n %{name}-%{version}
 
 %build
-# Upstream’s standard CMake flow (Release, prefix /usr) :contentReference[oaicite:2]{index=2}
 %cmake -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_TESTING=OFF
@@ -83,4 +78,3 @@ Headers and development files for building software against %{name}.
 
 %changelog
 %autochangelog
-

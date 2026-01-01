@@ -56,15 +56,21 @@ jobs:
 
       - name: Bump spec version
         if: steps.compare.outputs.update == 'true'
+        env:
+          LATEST: ${{ steps.latest.outputs.version }}
         run: |
-          latest="${{ steps.latest.outputs.version }}"
-          # Replace only the first Version: line; leave pkg-config template intact
-          perl -0777 -pi -e "s/^(Version:\\s*)\\S+/\$1${latest}/m" specs/glaze.spec
-          echo "Updated glaze.spec to $latest"
+          spec="specs/glaze.spec"
+          if ! grep -q '^Version:' "$spec"; then
+            echo "Version line not found in $spec" >&2
+            exit 1
+          fi
+          sed -i -e "0,/^Version:[[:space:]]*/s//Version:        ${LATEST}/" "$spec"
+          echo "Updated $spec to ${LATEST}"
 
       - name: Create pull request
         if: steps.compare.outputs.update == 'true'
         uses: peter-evans/create-pull-request@v6
+        id: cpr
         with:
           token: ${{ env.PR_TOKEN }}
           branch: chore/update-glaze-${{ steps.latest.outputs.version }}
@@ -77,6 +83,14 @@ jobs:
             - Upstream version: ${{ steps.latest.outputs.version }}
 
             This updates `specs/glaze.spec` when upstream moves ahead.
+
+      - name: Enable auto-merge
+        if: steps.cpr.outputs.pull-request-number != ''
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ env.PR_TOKEN }}
+          pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+          merge-method: squash
 
       - name: No update needed
         if: steps.compare.outputs.update != 'true'
