@@ -1,5 +1,5 @@
 Name:           hyprland-guiutils
-Version:        0.2.0
+.2.1
 Release:        %autorelease
 Summary:        Hyprland GUI utilities (successor to hyprland-qtutils)
 
