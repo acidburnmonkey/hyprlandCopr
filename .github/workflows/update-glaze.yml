@@ -11,6 +11,8 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+    env:
+      PR_TOKEN: ${{ secrets.REPO_AUTOMATION_TOKEN }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -64,7 +66,7 @@ jobs:
         if: steps.compare.outputs.update == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ env.PR_TOKEN }}
           branch: chore/update-glaze-${{ steps.latest.outputs.version }}
           commit-message: 'chore: bump glaze to v${{ steps.latest.outputs.version }}'
           title: 'chore: bump glaze to v${{ steps.latest.outputs.version }}'

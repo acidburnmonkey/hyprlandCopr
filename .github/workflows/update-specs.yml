@@ -8,6 +8,11 @@ on:
 
 jobs:
   update:
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      PR_TOKEN: ${{ secrets.REPO_AUTOMATION_TOKEN }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -98,7 +103,7 @@ jobs:
         if: steps.compare.outputs.update == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ env.PR_TOKEN }}
           branch: chore/update-${{ matrix.name }}-${{ steps.latest.outputs.version }}
           commit-message: 'chore: bump ${{ matrix.name }} to v${{ steps.latest.outputs.version }}'
           title: 'chore: bump ${{ matrix.name }} to v${{ steps.latest.outputs.version }}'
