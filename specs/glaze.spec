@@ -1,5 +1,5 @@
 Name:           glaze
-Version:        6.2.0
+.4.1
 Release:        %autorelease
 Summary:        Extremely fast, in-memory JSON and interface library
 
