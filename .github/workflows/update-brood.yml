@@ -99,7 +99,8 @@ jobs:
             echo "Version line not found in $spec" >&2
             exit 1
           fi
-          sed -i -e "0,/^Version:[[:space:]]*/s//Version:        ${LATEST}/" "$spec"
+          safe_latest=$(printf '%s\n' "$LATEST" | sed 's/[\\&/]/\\&/g')
+          sed -i -E "0,/^Version:.*/s//Version:        ${safe_latest}/" "$spec"
           echo "Updated $spec to ${LATEST}"
 
       - name: Create pull request
