@@ -74,9 +74,13 @@ BuildRequires:  libuuid-devel
 BuildRequires:  uuid-c++-devel
 BuildRequires:  uuid-devel
 BuildRequires:  udis86-devel
-
 # If linking against system udis86:
 Requires:       xorg-x11-server-Xwayland%{?_isa}
+
+Recommends: hyprland-guiutils
+Recommends: qt6-qtwayland
+Recommends: polkit
+Recommends: xdg-desktop-portal-hyprland
 
 %description
 Hyprland is a dynamic tiling Wayland compositor that doesn't sacrifice on its looks.
