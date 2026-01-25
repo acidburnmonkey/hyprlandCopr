@@ -58,6 +58,7 @@ Headers and development files for building software against %{name}.
 %autosetup -n %{name}-%{version}
 
 %build
+export CXXFLAGS="%{optflags} ${CXXFLAGS:-} -include array -include limits.h"
 %cmake -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_TESTING=OFF
