@@ -20,7 +20,7 @@ BuildRequires:  hyprlang-devel >= 0.6.7
 BuildRequires:  hyprcursor-devel >= 0.1.7
 BuildRequires:  hyprgraphics-devel >= 0.5.0
 BuildRequires:  aquamarine-devel >= 0.9.3
-BuildRequires:  hyprwire-devel
+BuildRequires:  hyprwire-devel >= 0.3.0
 BuildRequires:  hyprland-protocols
 BuildRequires:  glaze-devel
 BuildRequires:  git

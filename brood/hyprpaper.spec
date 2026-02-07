@@ -21,7 +21,7 @@ BuildRequires:  pkgconfig(hyprlang)
 BuildRequires:  pkgconfig(hyprtoolkit)
 BuildRequires:  pkgconfig(hyprutils)
 BuildRequires:  pkgconfig(hyprwayland-scanner)
-BuildRequires:  pkgconfig(hyprwire)
+BuildRequires:  pkgconfig(hyprwire) >= 0.3.0
 BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libmagic)
 BuildRequires:  pkgconfig(pixman-1)
