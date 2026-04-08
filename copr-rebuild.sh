@@ -91,6 +91,7 @@ wait_all "hyprland:$id_hyprland"
 # ── Wave 4a: brood roots (hyprtoolkit must rebuild before hyprpaper/guiutils) ──
 # hyprpaper and hyprland-guiutils depend on hyprtoolkit-devel; after a hyprutils
 # soname bump the stale hyprtoolkit in the repo breaks their dep resolution.
+# hyprpicker only needs hyprutils+hyprwayland-scanner so it runs here too.
 
 echo ""
 echo "=== Wave 4a: brood roots ==="
@@ -99,15 +100,17 @@ id_polkit=$(submit     hyprpolkitagent            "$ROOT/brood/hyprpolkitagent.s
 id_xdgportal=$(submit  xdg-desktop-portal-hyprland "$ROOT/brood/xdg-desktop-portal-hyprland.spec")
 id_idle=$(submit       hypridle                   "$ROOT/brood/hypridle.spec")
 id_lock=$(submit       hyprlock                   "$ROOT/brood/hyprlock.spec")
+id_picker=$(submit     hyprpicker                 "$ROOT/brood/hyprpicker.spec")
 
-echo "  hyprtoolkit=$id_toolkit  hyprpolkitagent=$id_polkit  xdg-desktop-portal-hyprland=$id_xdgportal  hypridle=$id_idle  hyprlock=$id_lock"
+echo "  hyprtoolkit=$id_toolkit  hyprpolkitagent=$id_polkit  xdg-desktop-portal-hyprland=$id_xdgportal  hypridle=$id_idle  hyprlock=$id_lock  hyprpicker=$id_picker"
 
 wait_all \
     "hyprtoolkit:$id_toolkit" \
     "hyprpolkitagent:$id_polkit" \
     "xdg-desktop-portal-hyprland:$id_xdgportal" \
     "hypridle:$id_idle" \
-    "hyprlock:$id_lock"
+    "hyprlock:$id_lock" \
+    "hyprpicker:$id_picker"
 
 # ── Wave 4b: hyprtoolkit dependents ───────────────────────────────────────────
 

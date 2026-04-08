@@ -39,6 +39,9 @@ jobs:
           - name: xdg-desktop-portal-hyprland
             repo: hyprwm/xdg-desktop-portal-hyprland
             spec: brood/xdg-desktop-portal-hyprland.spec
+          - name: hyprpicker
+            repo: hyprwm/hyprpicker
+            spec: brood/hyprpicker.spec
 
     steps:
       - name: Checkout
