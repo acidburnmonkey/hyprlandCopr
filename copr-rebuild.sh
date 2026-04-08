@@ -16,7 +16,15 @@ SPECS="$ROOT/specs"
 
 submit() {
     # submit <label> <spec-path>
-    local label="$1" spec="$2"
+    local label="$1" spec="$2" today
+    today=$(date +%Y-%m-%d)
+    if grep -q '^# Rebuilt:' "$spec"; then
+        sed -i "s/^# Rebuilt:.*/# Rebuilt: $today/" "$spec"
+    else
+        sed -i "/^Release:/a # Rebuilt: $today" "$spec"
+    fi
+    git -C "$ROOT" add "$spec" >&2
+    git -C "$ROOT" commit -m "chore: rebuild $label" >&2
     local out id
     out=$(copr-cli build "$PROJECT" "$spec" --nowait 2>&1)
     id=$(echo "$out" | grep -oP '(?<=Created builds: )\d+')
