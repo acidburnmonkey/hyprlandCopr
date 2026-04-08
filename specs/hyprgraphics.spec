@@ -24,6 +24,8 @@ BuildRequires:  librsvg2-devel
 BuildRequires:  file-devel
 BuildRequires:  libjxl-devel
 BuildRequires:  mesa-libGLES-devel
+BuildRequires:  libdrm-devel
+BuildRequires:  pango-devel
 
 %description
 Hyprgraphics is a small C++ library with graphics / resource related utilities used
