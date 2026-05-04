@@ -1,6 +1,7 @@
 Name:           hyprland-guiutils
 Version:        0.2.1
 Release:        %autorelease
+# Rebuilt: 2026-05-04
 Summary:        Hyprland GUI utilities (successor to hyprland-qtutils)
 
 License:        BSD-3-Clause
