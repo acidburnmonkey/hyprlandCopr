@@ -1,7 +1,7 @@
 Name:           hyprland-protocols
 Version:        0.7.0
 Release:        %autorelease
-# Rebuilt: 2026-04-08
+# Rebuilt: 2026-05-04
 Summary:        Wayland protocol files for Hyprland
 License:        BSD-3-Clause
 URL:            https://github.com/hyprwm/hyprland-protocols
