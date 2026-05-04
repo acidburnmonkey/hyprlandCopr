@@ -1,6 +1,7 @@
 Name:           hypridle
 Version:        0.1.7
 Release:        %autorelease
+# Rebuilt: 2026-05-04
 Summary:        Hyprland's idle daemon
 
 License:        BSD-3-Clause
