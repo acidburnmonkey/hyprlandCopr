@@ -1,6 +1,7 @@
 Name:           hyprpolkitagent
 Version:        0.1.3
 Release:        %autorelease
+# Rebuilt: 2026-05-04
 Summary:        Simple polkit authentication agent for Hyprland (Qt/QML)
 
 License:        BSD-3-Clause
