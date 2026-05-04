@@ -1,6 +1,7 @@
 Name:           hyprcursor
 Version:        0.1.13
 Release:        %autorelease
+# Rebuilt: 2026-05-04
 Summary:        Cursor library for the Hyprland ecosystem
 
 License:        BSD-3-Clause
