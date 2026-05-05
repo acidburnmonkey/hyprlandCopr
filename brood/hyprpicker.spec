@@ -1,5 +1,5 @@
 Name:           hyprpicker
-Version:        0.4.6
+Version:        0.4.7
 Release:        %autorelease
 # Rebuilt: 2026-05-04
 Summary:        A wlroots-compatible Wayland color picker that does not suck
