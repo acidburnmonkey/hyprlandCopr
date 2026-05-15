@@ -75,6 +75,7 @@ BuildRequires:  libuuid-devel
 BuildRequires:  uuid-c++-devel
 BuildRequires:  uuid-devel
 BuildRequires:  udis86-devel
+BuildRequires:  lua-devel
 # If linking against system udis86:
 Requires:       xorg-x11-server-Xwayland%{?_isa}
 
@@ -95,6 +96,8 @@ Development headers and pkg-config file for Hyprland.
 
 %prep
 %autosetup -n Hyprland-%{version}
+# Fedora only ships Lua 5.4; patch cmake to accept it instead of requiring 5.5
+sed -i 's/lua55;lua5\.5;lua-55;lua-5\.5;lua>=5\.5;lua<5\.6/lua-5.4;lua5.4;lua54;lua>=5.4/' CMakeLists.txt
 
 
 %build
